@@ -1,0 +1,16 @@
+{
+  "buildCommand": "pnpm build",
+  "outputDirectory": "dist",
+  "framework": "astro",
+  "devCommand": "pnpm dev",
+  "installCommand": "pnpm install",
+  "regions": ["sin1"],
+  "env": {
+    "PUBLIC_SANITY_PROJECT_ID": "@public_sanity_project_id",
+    "PUBLIC_SANITY_DATASET": "@public_sanity_dataset",
+    "SANITY_API_TOKEN": "@sanity_api_token",
+    "SANITY_PREVIEW_SECRET": "@sanity_preview_secret",
+    "PUBLIC_SITE_URL": "@public_site_url"
+  }
+}
+

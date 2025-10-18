@@ -1,0 +1,3 @@
+# This file is replaced by /src/pages/robots.txt.ts at build time
+# The dynamic version includes the sitemap URL from environment variables
+

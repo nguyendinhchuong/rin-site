@@ -1,0 +1,46 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import BlogCard from '@/components/BlogCard';
+import { sanityClient, urlFor } from '@/lib/sanity';
+import { allPostsQuery } from '@/lib/queries';
+import { generateBreadcrumbSchema } from '@/lib/seo';
+
+export const prerender = false;
+
+const locale = 'vi';
+
+const posts = await sanityClient.fetch(allPostsQuery, { language: locale });
+
+const siteUrl = Astro.site?.toString() || 'https://vinhson.com.vn';
+
+const breadcrumbSchema = generateBreadcrumbSchema([
+  { name: 'Trang chủ', url: `${siteUrl}/vi` },
+  { name: 'Tin tức', url: `${siteUrl}/vi/blog` },
+]);
+---
+
+<Layout
+  title="Tin tức - Vinh Son"
+  description="Cập nhật tin tức và xu hướng mới nhất"
+  schema={breadcrumbSchema}
+>
+  <div class="container mx-auto px-4 py-8">
+    <div class="mb-8">
+      <h1 class="mb-2 text-4xl font-bold">Tin tức</h1>
+      <p class="text-muted-foreground">Cập nhật tin tức và xu hướng mới nhất</p>
+    </div>
+
+    {posts && posts.length > 0 ? (
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {posts.map((post: any) => (
+          <BlogCard client:load post={post} urlFor={urlFor} locale={locale} />
+        ))}
+      </div>
+    ) : (
+      <div class="py-16 text-center">
+        <p class="text-lg text-muted-foreground">Chưa có bài viết nào.</p>
+      </div>
+    )}
+  </div>
+</Layout>
+

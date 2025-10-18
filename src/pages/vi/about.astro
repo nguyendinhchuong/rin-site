@@ -1,0 +1,63 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import { sanityClient } from '@/lib/sanity';
+import { siteSettingsQuery } from '@/lib/queries';
+import { generateBreadcrumbSchema } from '@/lib/seo';
+
+export const prerender = false;
+
+const locale = 'vi';
+const siteSettings = await sanityClient.fetch(siteSettingsQuery, { language: locale });
+
+const siteUrl = Astro.site?.toString() || 'https://vinhson.com.vn';
+
+const breadcrumbSchema = generateBreadcrumbSchema([
+  { name: 'Trang chủ', url: `${siteUrl}/vi` },
+  { name: 'Giới thiệu', url: `${siteUrl}/vi/about` },
+]);
+---
+
+<Layout
+  title="Giới thiệu - Vinh Son"
+  description="Tìm hiểu về chúng tôi"
+  schema={breadcrumbSchema}
+>
+  <div class="container mx-auto px-4 py-16">
+    <div class="mx-auto max-w-3xl">
+      <h1 class="mb-8 text-4xl font-bold md:text-5xl">Giới thiệu</h1>
+      
+      <div class="prose prose-lg max-w-none">
+        <p>
+          {siteSettings?.siteDescription || 'Chào mừng bạn đến với công ty chúng tôi.'}
+        </p>
+        
+        <h2>Về chúng tôi</h2>
+        <p>
+          Chúng tôi là một công ty chuyên cung cấp các sản phẩm và dịch vụ chất lượng cao.
+          Với nhiều năm kinh nghiệm trong ngành, chúng tôi cam kết mang đến những giải pháp
+          tốt nhất cho khách hàng.
+        </p>
+
+        <h2>Sứ mệnh</h2>
+        <p>
+          Sứ mệnh của chúng tôi là cung cấp các sản phẩm và dịch vụ xuất sắc, đáp ứng
+          nhu cầu của khách hàng và tạo ra giá trị bền vững.
+        </p>
+
+        <h2>Giá trị cốt lõi</h2>
+        <ul>
+          <li>Chất lượng hàng đầu</li>
+          <li>Dịch vụ khách hàng tận tâm</li>
+          <li>Đổi mới và sáng tạo</li>
+          <li>Trách nhiệm với cộng đồng</li>
+        </ul>
+
+        <h2>Liên hệ</h2>
+        <p>
+          Để biết thêm thông tin, vui lòng liên hệ với chúng tôi qua email hoặc số điện thoại.
+        </p>
+      </div>
+    </div>
+  </div>
+</Layout>
+

@@ -1,0 +1,139 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import { sanityClient } from '@/lib/sanity';
+import { siteSettingsQuery } from '@/lib/queries';
+import { generateBreadcrumbSchema } from '@/lib/seo';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+
+export const prerender = false;
+
+const locale = 'en';
+const siteSettings = await sanityClient.fetch(siteSettingsQuery, { language: locale });
+
+const siteUrl = Astro.site?.toString() || 'https://vinhson.com.vn';
+
+const breadcrumbSchema = generateBreadcrumbSchema([
+  { name: 'Home', url: `${siteUrl}/en` },
+  { name: 'Contact', url: `${siteUrl}/en/contact` },
+]);
+---
+
+<Layout
+  title="Contact - Vinh Son"
+  description="Get in touch with us"
+  schema={breadcrumbSchema}
+>
+  <div class="container mx-auto px-4 py-16">
+    <div class="mb-8 text-center">
+      <h1 class="mb-4 text-4xl font-bold md:text-5xl">Contact Us</h1>
+      <p class="text-muted-foreground">We're always ready to listen and support you</p>
+    </div>
+
+    <div class="mx-auto grid max-w-5xl grid-cols-1 gap-8 lg:grid-cols-2">
+      <!-- Contact Information -->
+      <div class="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Contact Information</CardTitle>
+          </CardHeader>
+          <CardContent class="space-y-4">
+            {siteSettings?.contactEmail && (
+              <div>
+                <h3 class="mb-2 font-semibold">Email</h3>
+                <a href={`mailto:${siteSettings.contactEmail}`} class="text-primary hover:underline">
+                  {siteSettings.contactEmail}
+                </a>
+              </div>
+            )}
+            
+            {siteSettings?.contactPhone && (
+              <div>
+                <h3 class="mb-2 font-semibold">Phone</h3>
+                <a href={`tel:${siteSettings.contactPhone}`} class="text-primary hover:underline">
+                  {siteSettings.contactPhone}
+                </a>
+              </div>
+            )}
+            
+            {siteSettings?.address && (
+              <div>
+                <h3 class="mb-2 font-semibold">Address</h3>
+                <p>{siteSettings.address}</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Business Hours</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p>Monday - Friday: 8:00 AM - 5:00 PM</p>
+            <p>Saturday: 8:00 AM - 12:00 PM</p>
+            <p>Sunday: Closed</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <!-- Contact Form -->
+      <Card>
+        <CardHeader>
+          <CardTitle>Send a Message</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form class="space-y-4">
+            <div>
+              <label for="name" class="mb-2 block text-sm font-medium">Full Name</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                required
+                class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              />
+            </div>
+            
+            <div>
+              <label for="email" class="mb-2 block text-sm font-medium">Email</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                required
+                class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              />
+            </div>
+            
+            <div>
+              <label for="phone" class="mb-2 block text-sm font-medium">Phone Number</label>
+              <input
+                type="tel"
+                id="phone"
+                name="phone"
+                class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              />
+            </div>
+            
+            <div>
+              <label for="message" class="mb-2 block text-sm font-medium">Message</label>
+              <textarea
+                id="message"
+                name="message"
+                rows="5"
+                required
+                class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              ></textarea>
+            </div>
+            
+            <Button type="submit" class="w-full">
+              Send Message
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
+  </div>
+</Layout>
+

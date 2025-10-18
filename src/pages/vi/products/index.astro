@@ -1,0 +1,71 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import ProductCard from '@/components/ProductCard';
+import { sanityClient, urlFor } from '@/lib/sanity';
+import { allProductsQuery, categoriesQuery } from '@/lib/queries';
+import { generateBreadcrumbSchema } from '@/lib/seo';
+
+export const prerender = false;
+
+const locale = 'vi';
+
+const [products, categories] = await Promise.all([
+  sanityClient.fetch(allProductsQuery, { language: locale }),
+  sanityClient.fetch(categoriesQuery, { language: locale }),
+]);
+
+const siteUrl = Astro.site?.toString() || 'https://vinhson.com.vn';
+
+const breadcrumbSchema = generateBreadcrumbSchema([
+  { name: 'Trang chủ', url: `${siteUrl}/vi` },
+  { name: 'Sản phẩm', url: `${siteUrl}/vi/products` },
+]);
+---
+
+<Layout
+  title="Sản phẩm - Vinh Son"
+  description="Khám phá bộ sưu tập sản phẩm của chúng tôi"
+  schema={breadcrumbSchema}
+>
+  <div class="container mx-auto px-4 py-8">
+    <div class="mb-8">
+      <h1 class="mb-2 text-4xl font-bold">Sản phẩm</h1>
+      <p class="text-muted-foreground">Khám phá bộ sưu tập sản phẩm của chúng tôi</p>
+    </div>
+
+    {categories && categories.length > 0 && (
+      <div class="mb-8">
+        <h2 class="mb-4 text-xl font-semibold">Danh mục</h2>
+        <div class="flex flex-wrap gap-2">
+          <a
+            href="/vi/products"
+            class="rounded-full border px-4 py-2 text-sm transition-colors hover:bg-accent"
+          >
+            Tất cả
+          </a>
+          {categories.map((category: any) => (
+            <a
+              href={`/vi/products/category/${category.slug.current}`}
+              class="rounded-full border px-4 py-2 text-sm transition-colors hover:bg-accent"
+            >
+              {category.name}
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
+
+    {products && products.length > 0 ? (
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {products.map((product: any) => (
+          <ProductCard client:load product={product} urlFor={urlFor} locale={locale} />
+        ))}
+      </div>
+    ) : (
+      <div class="py-16 text-center">
+        <p class="text-lg text-muted-foreground">Chưa có sản phẩm nào.</p>
+      </div>
+    )}
+  </div>
+</Layout>
+

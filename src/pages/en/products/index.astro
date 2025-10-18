@@ -1,0 +1,71 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import ProductCard from '@/components/ProductCard';
+import { sanityClient, urlFor } from '@/lib/sanity';
+import { allProductsQuery, categoriesQuery } from '@/lib/queries';
+import { generateBreadcrumbSchema } from '@/lib/seo';
+
+export const prerender = false;
+
+const locale = 'en';
+
+const [products, categories] = await Promise.all([
+  sanityClient.fetch(allProductsQuery, { language: locale }),
+  sanityClient.fetch(categoriesQuery, { language: locale }),
+]);
+
+const siteUrl = Astro.site?.toString() || 'https://vinhson.com.vn';
+
+const breadcrumbSchema = generateBreadcrumbSchema([
+  { name: 'Home', url: `${siteUrl}/en` },
+  { name: 'Products', url: `${siteUrl}/en/products` },
+]);
+---
+
+<Layout
+  title="Products - Vinh Son"
+  description="Explore our product collection"
+  schema={breadcrumbSchema}
+>
+  <div class="container mx-auto px-4 py-8">
+    <div class="mb-8">
+      <h1 class="mb-2 text-4xl font-bold">Products</h1>
+      <p class="text-muted-foreground">Explore our product collection</p>
+    </div>
+
+    {categories && categories.length > 0 && (
+      <div class="mb-8">
+        <h2 class="mb-4 text-xl font-semibold">Categories</h2>
+        <div class="flex flex-wrap gap-2">
+          <a
+            href="/en/products"
+            class="rounded-full border px-4 py-2 text-sm transition-colors hover:bg-accent"
+          >
+            All
+          </a>
+          {categories.map((category: any) => (
+            <a
+              href={`/en/products/category/${category.slug.current}`}
+              class="rounded-full border px-4 py-2 text-sm transition-colors hover:bg-accent"
+            >
+              {category.name}
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
+
+    {products && products.length > 0 ? (
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {products.map((product: any) => (
+          <ProductCard client:load product={product} urlFor={urlFor} locale={locale} />
+        ))}
+      </div>
+    ) : (
+      <div class="py-16 text-center">
+        <p class="text-lg text-muted-foreground">No products available.</p>
+      </div>
+    )}
+  </div>
+</Layout>
+

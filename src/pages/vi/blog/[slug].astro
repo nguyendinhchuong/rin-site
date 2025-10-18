@@ -1,0 +1,129 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import { sanityClient, urlFor } from '@/lib/sanity';
+import { postQuery } from '@/lib/queries';
+import { generateArticleSchema, generateBreadcrumbSchema } from '@/lib/seo';
+import { PortableTextRenderer } from '@/components/PortableTextRenderer';
+import { SanityImage } from '@/components/SanityImage';
+
+export const prerender = false;
+
+const { slug } = Astro.params;
+const locale = 'vi';
+
+const post = await sanityClient.fetch(postQuery, {
+  slug,
+  language: locale,
+});
+
+if (!post || post.status !== 'published') {
+  return Astro.redirect('/vi/blog');
+}
+
+const siteUrl = Astro.site?.toString() || 'https://vinhson.com.vn';
+const postUrl = `${siteUrl}/vi/blog/${slug}`;
+
+const articleSchema = generateArticleSchema(
+  post.title,
+  post.excerpt || '',
+  postUrl,
+  post.publishedAt,
+  post.author || 'Admin',
+  post.mainImage ? urlFor(post.mainImage).url() : undefined
+);
+
+const breadcrumbSchema = generateBreadcrumbSchema([
+  { name: 'Trang chủ', url: `${siteUrl}/vi` },
+  { name: 'Tin tức', url: `${siteUrl}/vi/blog` },
+  { name: post.title, url: postUrl },
+]);
+
+const schema = {
+  '@graph': [articleSchema, breadcrumbSchema],
+};
+
+const formatDate = (dateString?: string) => {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  return new Intl.DateTimeFormat('vi-VN', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }).format(date);
+};
+---
+
+<Layout
+  title={post.seo?.metaTitle || `${post.title} - Vinh Son`}
+  description={post.seo?.metaDescription || post.excerpt}
+  image={post.mainImage ? urlFor(post.mainImage).url() : undefined}
+  keywords={post.seo?.metaKeywords}
+  type="article"
+  publishedTime={post.publishedAt}
+  author={post.author}
+  schema={schema}
+>
+  <article class="container mx-auto max-w-4xl px-4 py-8">
+    <!-- Featured Image -->
+    {post.mainImage && (
+      <div class="mb-8 overflow-hidden rounded-lg">
+        <SanityImage
+          image={post.mainImage}
+          alt={post.mainImage.alt || post.title}
+          width={1200}
+          height={630}
+          className="h-auto w-full"
+          priority={true}
+        />
+      </div>
+    )}
+
+    <!-- Article Header -->
+    <header class="mb-8">
+      <h1 class="mb-4 text-4xl font-bold md:text-5xl">{post.title}</h1>
+      
+      <div class="flex items-center gap-4 text-sm text-muted-foreground">
+        {post.author && <span>Bởi {post.author}</span>}
+        {post.publishedAt && (
+          <>
+            <span>•</span>
+            <time datetime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
+          </>
+        )}
+      </div>
+
+      {post.categories && post.categories.length > 0 && (
+        <div class="mt-4 flex flex-wrap gap-2">
+          {post.categories.map((category: any) => (
+            <span class="rounded-full bg-muted px-3 py-1 text-sm">
+              {category.name}
+            </span>
+          ))}
+        </div>
+      )}
+
+      {post.excerpt && (
+        <p class="mt-4 text-xl text-muted-foreground">{post.excerpt}</p>
+      )}
+    </header>
+
+    <!-- Article Content -->
+    {post.content && post.content.length > 0 && (
+      <PortableTextRenderer content={post.content} />
+    )}
+
+    <!-- Share & Back -->
+    <div class="mt-12 border-t pt-8">
+      <a
+        href="/vi/blog"
+        class="inline-flex items-center text-sm text-muted-foreground hover:text-foreground"
+      >
+        <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+        Quay lại danh sách tin tức
+      </a>
+    </div>
+  </article>
+</Layout>
+

@@ -1,0 +1,63 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import { sanityClient } from '@/lib/sanity';
+import { siteSettingsQuery } from '@/lib/queries';
+import { generateBreadcrumbSchema } from '@/lib/seo';
+
+export const prerender = false;
+
+const locale = 'en';
+const siteSettings = await sanityClient.fetch(siteSettingsQuery, { language: locale });
+
+const siteUrl = Astro.site?.toString() || 'https://vinhson.com.vn';
+
+const breadcrumbSchema = generateBreadcrumbSchema([
+  { name: 'Home', url: `${siteUrl}/en` },
+  { name: 'About', url: `${siteUrl}/en/about` },
+]);
+---
+
+<Layout
+  title="About - Vinh Son"
+  description="Learn more about us"
+  schema={breadcrumbSchema}
+>
+  <div class="container mx-auto px-4 py-16">
+    <div class="mx-auto max-w-3xl">
+      <h1 class="mb-8 text-4xl font-bold md:text-5xl">About Us</h1>
+      
+      <div class="prose prose-lg max-w-none">
+        <p>
+          {siteSettings?.siteDescription || 'Welcome to our company.'}
+        </p>
+        
+        <h2>About Our Company</h2>
+        <p>
+          We are a company specialized in providing high-quality products and services.
+          With many years of experience in the industry, we are committed to delivering
+          the best solutions to our customers.
+        </p>
+
+        <h2>Our Mission</h2>
+        <p>
+          Our mission is to provide excellent products and services that meet customer
+          needs and create sustainable value.
+        </p>
+
+        <h2>Core Values</h2>
+        <ul>
+          <li>Top quality</li>
+          <li>Dedicated customer service</li>
+          <li>Innovation and creativity</li>
+          <li>Responsibility to the community</li>
+        </ul>
+
+        <h2>Contact</h2>
+        <p>
+          For more information, please contact us via email or phone.
+        </p>
+      </div>
+    </div>
+  </div>
+</Layout>
+
