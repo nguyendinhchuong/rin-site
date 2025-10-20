@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview",
+    "preview": "vercel dev",
+    "preview:info": "echo 'Note: Using Vercel CLI for preview. For regular dev, use: pnpm dev'",
     "astro": "astro",
     "sanity": "cd sanity && sanity start",
     "sanity:deploy": "cd sanity && sanity deploy"
@@ -13,6 +14,7 @@
   "dependencies": {
     "@astrojs/react": "^4.4.0",
     "@astrojs/sitemap": "^3.6.0",
+    "@astrojs/vercel": "^8.2.10",
     "@portabletext/react": "^4.0.3",
     "@radix-ui/react-navigation-menu": "^1.2.14",
     "@radix-ui/react-slot": "^1.2.3",
@@ -23,7 +25,7 @@
     "@tailwindcss/vite": "^4.1.14",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.1",
-    "astro": "^5.14.1",
+    "astro": "^5.14.6",
     "astro-i18next": "1.0.0-beta.21",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
