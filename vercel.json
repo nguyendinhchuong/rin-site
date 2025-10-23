@@ -6,11 +6,11 @@
   "installCommand": "pnpm install",
   "regions": ["sin1"],
   "env": {
-    "PUBLIC_SANITY_PROJECT_ID": "@public_sanity_project_id",
-    "PUBLIC_SANITY_DATASET": "@public_sanity_dataset",
-    "SANITY_API_TOKEN": "@sanity_api_token",
-    "SANITY_PREVIEW_SECRET": "@sanity_preview_secret",
-    "PUBLIC_SITE_URL": "@public_site_url"
+    "PUBLIC_SANITY_PROJECT_ID": "$PUBLIC_SANITY_PROJECT_ID",
+    "PUBLIC_SANITY_DATASET": "$PUBLIC_SANITY_DATASET",
+    "SANITY_API_TOKEN": "$SANITY_API_TOKEN",
+    "SANITY_PREVIEW_SECRET": "$SANITY_PREVIEW_SECRET",
+    "PUBLIC_SITE_URL": "$PUBLIC_SITE_URL"
   }
 }
 
